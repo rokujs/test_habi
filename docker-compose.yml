@@ -1,0 +1,42 @@
+services:
+
+  postgres:
+    container_name: habi_database
+    image: postgres:17.7-alpine3.23
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init/postgres:/docker-entrypoint-initdb.d:ro
+      - ./storage/postgres:/var/lib/postgresql/data:rw
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iTrn548tV7kgXeGeaAfv
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend-net
+
+  backend:
+    container_name: habi_app
+    platform: linux/amd64
+    build: ./app
+    volumes:
+      - ./app:/opt/project:rw
+      - venv-data:/opt/project/.venv
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: app/.env
+    networks:
+      - backend-net
+
+networks:
+  backend-net:
+
+volumes:
+  venv-data:
