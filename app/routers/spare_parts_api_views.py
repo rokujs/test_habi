@@ -1,3 +1,4 @@
+from core.decorators import measure_time
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
@@ -15,6 +16,7 @@ router = APIRouter(prefix="/items", tags=["Items"])
     response_model=SparePartResponse,
     status_code=status.HTTP_201_CREATED,
 )
+@measure_time
 def create_spare_part(
     spare_part_data: SparePartCreate,
     db: Session = Depends(get_db),
@@ -57,6 +59,7 @@ def create_spare_part(
 
 
 @router.patch("/{sku}", response_model=SparePartResponse)
+@measure_time
 def update_spare_part(
     sku: str,
     spare_part_data: SparePartUpdate,
@@ -98,6 +101,7 @@ def update_spare_part(
 
 
 @router.get("/", response_model=list[SparePartResponse])
+@measure_time
 def list_spare_parts(
     skip: int = 0,
     limit: int = 10,
