@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 from core.database import get_db
 from core.utils import validate_sku_format
 from models.spare_part import SparePart
-from schemas.spare_part import SparePartCreate, SparePartResponse, SparePartUpdate
+from schemas.spare_part_schemas import SparePartCreate, SparePartResponse, SparePartUpdate
 
 router = APIRouter(prefix="/items", tags=["Items"])
 

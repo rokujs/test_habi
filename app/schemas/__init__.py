@@ -1,5 +1,5 @@
-from schemas.category import CategoryCreate, CategoryResponse
-from schemas.spare_part import SparePartCreate, SparePartResponse, SparePartUpdate
+from schemas.category_schemas import CategoryCreate, CategoryResponse
+from schemas.spare_part_schemas import SparePartCreate, SparePartResponse, SparePartUpdate
 
 __all__ = [
     "CategoryCreate",

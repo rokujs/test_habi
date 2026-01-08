@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from schemas.category import CategoryResponse
+from schemas.category_schemas import CategoryResponse
 
 
 class SparePartCreate(BaseModel):
