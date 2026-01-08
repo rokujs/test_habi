@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from core.database import get_db
 from models.category import Category
-from schemas.category import CategoryCreate, CategoryResponse
+from schemas.category_schemas import CategoryCreate, CategoryResponse
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
