@@ -30,3 +30,10 @@ class SparePartResponse(BaseModel):
     category: CategoryResponse | None
     date_created: datetime
     date_updated: datetime | None
+
+class SparePartUpdate(BaseModel):
+    """Schema for partial update of a spare part (PATCH)."""
+
+    price: Decimal | None = Field(default=None, ge=0, decimal_places=2)
+    stock: int | None = Field(default=None, ge=0)
+
