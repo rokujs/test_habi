@@ -1,6 +1,15 @@
+import logging
+
 from fastapi import FastAPI
 
 from routers import categories_router, spare_parts_router
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()],
+)
 
 app = FastAPI(
     title="Maintenance Service API",
