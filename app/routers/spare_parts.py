@@ -95,3 +95,25 @@ def update_spare_part(
     db.refresh(spare_part)
 
     return spare_part
+
+
+@router.get("/", response_model=list[SparePartResponse])
+def list_spare_parts(
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+) -> list[SparePart]:
+    """
+    List all spare parts with their categories (LEFT JOIN).
+
+    - **skip**: Number of records to skip (pagination)
+    - **limit**: Maximum number of records to return
+    """
+    stmt = (
+        select(SparePart)
+        .options(joinedload(SparePart.category))
+        .offset(skip)
+        .limit(limit)
+    )
+    result = db.execute(stmt).scalars().unique().all()
+    return list(result)
