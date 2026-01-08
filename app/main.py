@@ -1,6 +1,20 @@
-def main():
-    print("Hello from habi-test!")
+from fastapi import FastAPI
+
+from routers import categories_router, spare_parts_router
+
+app = FastAPI(
+    title="Maintenance Service API",
+    description="API for managing spare parts and service orders",
+    version="1.0.0",
+)
+
+# Register routers
+app.include_router(categories_router)
+app.include_router(spare_parts_router)
 
 
-if __name__ == "__main__":
-    main()
+@app.get("/", tags=["Health"])
+def health_check() -> dict[str, str]:
+    """Health check endpoint."""
+    return {"status": "ok", "message": "Maintenance Service API is running"}
+
