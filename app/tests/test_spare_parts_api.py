@@ -122,7 +122,7 @@ class TestCreateSparePart:
 
         response = client.post("/items/", json=spare_part_data)
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_create_spare_part_negative_stock(self, client):
         """Test creating a spare part with negative stock fails validation."""
@@ -135,7 +135,7 @@ class TestCreateSparePart:
 
         response = client.post("/items/", json=spare_part_data)
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_create_spare_part_missing_required_fields(self, client):
         """Test creating a spare part without required fields fails."""
@@ -146,7 +146,7 @@ class TestCreateSparePart:
 
         response = client.post("/items/", json=spare_part_data)
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 class TestUpdateSparePart:
@@ -258,7 +258,7 @@ class TestUpdateSparePart:
 
         response = client.patch("/items/H-STL-M10-50", json=update_data)
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_update_spare_part_negative_stock(self, client, db_session):
         """Test updating with negative stock fails validation."""
@@ -275,7 +275,7 @@ class TestUpdateSparePart:
 
         response = client.patch("/items/I-STL-M10-50", json=update_data)
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 class TestListSpareParts:
