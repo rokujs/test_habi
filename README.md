@@ -44,14 +44,14 @@ habi_test/
 ### Prerequisites
 
 * **Docker**: Essential for running the application in a containerized environment. You can find installation instructions in the [official Docker documentation](https://docs.docker.com/get-docker/).
-* **Git**: Necessary for cloning the project repository. Installation instructions are available in the [official Git documentation](https://git-scm.com/downloads/linux/).
+* **Git**: Necessary for cloning the project repository. Installation instructions are available in the [official Git documentation](https://git-scm.com/install/linux).
 
 ### Installation & Setup
 
 1. **Clone the repository**
 ```bash
 git clone https://github.com/rokujs/test_habi.git
-cd habi_test
+cd test_habi
 ```
 
 2. **Environment Variables**
@@ -82,10 +82,10 @@ AWS_SECRET_ACCESS_KEY=awssecretkey
 
 3. **Build and Run with Docker Compose**
 ```bash
-docker-compose build
+docker compose build
 ```
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 The API will be available at:
