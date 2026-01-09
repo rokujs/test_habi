@@ -23,7 +23,7 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod u+x /docker-entrypoint.sh
 
 # Set the default command to run when the container starts
-# ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Set the default command to keep the container running
-ENTRYPOINT [ "sleep", "infinity" ]
+# ENTRYPOINT [ "sleep", "infinity" ]
