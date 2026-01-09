@@ -2,7 +2,7 @@ import logging
 
 from fastapi import FastAPI
 
-from routers import categories_router, spare_parts_router, orders_router
+from routers import categories_router, spare_parts_router, orders_router, orders_image_router
 
 # Configure logging
 logging.basicConfig(
@@ -21,6 +21,7 @@ app = FastAPI(
 app.include_router(categories_router)
 app.include_router(spare_parts_router)
 app.include_router(orders_router)
+app.include_router(orders_image_router)
 
 
 @app.get("/", tags=["Health"])
