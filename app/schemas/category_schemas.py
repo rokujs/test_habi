@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CategoryCreate(BaseModel):
     """Schema for creating a new category."""
 
-    name: str
-    description: str | None = None
+    name: str = Field(..., min_length=1, max_length=100)
+    description: str | None = Field(None, max_length=255)
 
 
 class CategoryResponse(BaseModel):
