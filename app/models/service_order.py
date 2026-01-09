@@ -21,10 +21,11 @@ class ServiceOrder(Auditor):
 
     __tablename__ = "service_orders"
 
+    IDEMPOTENCY_WINDOW_SECONDS = 100
+
+
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    request_id: Mapped[str] = mapped_column(
-        String(100),
-        unique=True,
+    request_id: Mapped[int] = mapped_column(
         nullable=False,
         index=True,
     )
