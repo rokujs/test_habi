@@ -1,6 +1,7 @@
 """
 Tests for spare parts API endpoints.
 """
+
 import pytest
 from decimal import Decimal
 from fastapi import status
@@ -34,7 +35,9 @@ class TestCreateSparePart:
         assert "date_created" in data
 
         # Verify it was saved in database
-        db_spare_part = db_session.query(SparePart).filter_by(sku="A-STL-M10-50").first()
+        db_spare_part = (
+            db_session.query(SparePart).filter_by(sku="A-STL-M10-50").first()
+        )
         assert db_spare_part is not None
         assert db_spare_part.name == spare_part_data["name"]
 

@@ -42,7 +42,7 @@ def create_service_order(
     existing_order = db.execute(
         select(ServiceOrder).where(
             ServiceOrder.request_id == order_data.request_id,
-            ServiceOrder.date_created >= idempotency_threshold
+            ServiceOrder.date_created >= idempotency_threshold,
         )
     ).scalar_one_or_none()
 
@@ -52,9 +52,11 @@ def create_service_order(
 
     # Validate all spare parts exist and get their prices
     spare_part_ids = [item.spare_part_id for item in order_data.items]
-    spare_parts = db.execute(
-        select(SparePart).where(SparePart.id.in_(spare_part_ids))
-    ).scalars().all()
+    spare_parts = (
+        db.execute(select(SparePart).where(SparePart.id.in_(spare_part_ids)))
+        .scalars()
+        .all()
+    )
 
     spare_parts_map = {sp.id: sp for sp in spare_parts}
 
@@ -73,7 +75,7 @@ def create_service_order(
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Insufficient stock for '{spare_part.name}' (SKU: {spare_part.sku}). "
-                       f"Available: {spare_part.stock}, Requested: {item.quantity}",
+                f"Available: {spare_part.stock}, Requested: {item.quantity}",
             )
 
     # Create the order
@@ -110,4 +112,3 @@ def create_service_order(
     db.refresh(order)
 
     return order
-

@@ -1,6 +1,7 @@
 """
 Pytest configuration file with shared fixtures for testing.
 """
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -19,12 +20,12 @@ def engine():
     """
     test_db_url = Settings.get_test_db_url()
     test_engine = create_engine(test_db_url, pool_pre_ping=True)
-    
+
     # Create all tables
     Base.metadata.create_all(bind=test_engine)
-    
+
     yield test_engine
-    
+
     # Drop all tables after tests
     Base.metadata.drop_all(bind=test_engine)
 
@@ -37,9 +38,9 @@ def db_session(engine):
     """
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     session = TestingSessionLocal()
-    
+
     yield session
-    
+
     session.rollback()
     session.close()
 
@@ -50,17 +51,18 @@ def client(db_session):
     Create a TestClient with a test database session.
     Overrides the get_db dependency to use the test database.
     """
+
     def override_get_db():
         try:
             yield db_session
         finally:
             pass
-    
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     with TestClient(app) as test_client:
         yield test_client
-    
+
     app.dependency_overrides.clear()
 
 
@@ -71,7 +73,7 @@ def clean_tables(db_session):
     This fixture runs automatically for all tests.
     """
     yield
-    
+
     # Clean all tables after test
     for table in reversed(Base.metadata.sorted_tables):
         db_session.execute(table.delete())

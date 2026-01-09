@@ -14,6 +14,7 @@ from services.s3_service import S3UploadError, s3_service
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
+
 @router.post(
     "/{order_id}/image/",
     response_model=ServiceOrderImageResponse,
@@ -106,8 +107,12 @@ def list_order_images(
             detail=f"Service order with ID '{order_id}' not found",
         )
 
-    images = db.execute(
-        select(ServiceOrderImage).where(ServiceOrderImage.order_id == order_id)
-    ).scalars().all()
+    images = (
+        db.execute(
+            select(ServiceOrderImage).where(ServiceOrderImage.order_id == order_id)
+        )
+        .scalars()
+        .all()
+    )
 
     return list(images)

@@ -3,7 +3,10 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from schemas.service_order_item_schemas import ServiceOrderItemCreate, ServiceOrderItemResponse
+from schemas.service_order_item_schemas import (
+    ServiceOrderItemCreate,
+    ServiceOrderItemResponse,
+)
 
 
 class ServiceOrderCreate(BaseModel):

@@ -9,7 +9,7 @@ from core.database import Base
 class ProcessedRequest(Base):
     """
     Stores processed request IDs for idempotency.
-    
+
     When a client sends a request with a request_id that has already been
     processed, we return the cached response instead of processing again.
     """

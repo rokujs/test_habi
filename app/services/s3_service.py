@@ -19,7 +19,9 @@ class S3Service:
         bucket_name: str | None = None,
         region: str | None = None,
     ):
-        self.bucket_name = bucket_name or os.getenv("AWS_S3_BUCKET", "maintenance-images")
+        self.bucket_name = bucket_name or os.getenv(
+            "AWS_S3_BUCKET", "maintenance-images"
+        )
         self.region = region or os.getenv("AWS_REGION", "us-east-1")
         self._client = None
 
@@ -55,7 +57,7 @@ class S3Service:
             else:
                 self.client.create_bucket(
                     Bucket=self.bucket_name,
-                    CreateBucketConfiguration={"LocationConstraint": self.region}
+                    CreateBucketConfiguration={"LocationConstraint": self.region},
                 )
             logger.info("Successfully created bucket '%s'", self.bucket_name)
         except ClientError as create_error:
@@ -105,7 +107,7 @@ class S3Service:
             raise S3UploadError(
                 f"Bucket '{self.bucket_name}' is not accessible: {str(bucket_error)}"
             ) from bucket_error
-        
+
         try:
             self.client.upload_fileobj(
                 file_content,
@@ -117,13 +119,12 @@ class S3Service:
             # Generate presigned URL valid for configured expiration time
             presigned_url = self.client.generate_presigned_url(
                 self.S3_GET_OBJECT,
-                Params={
-                    "Bucket": self.bucket_name,
-                    "Key": file_name
-                },
-                ExpiresIn=self.PRESIGNED_URL_EXPIRATION
+                Params={"Bucket": self.bucket_name, "Key": file_name},
+                ExpiresIn=self.PRESIGNED_URL_EXPIRATION,
             )
-            logger.info("Successfully uploaded '%s' to S3 with presigned URL", file_name)
+            logger.info(
+                "Successfully uploaded '%s' to S3 with presigned URL", file_name
+            )
             return presigned_url
 
         except ClientError as e:

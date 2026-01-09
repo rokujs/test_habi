@@ -6,7 +6,11 @@ from sqlalchemy.orm import Session, joinedload
 from core.database import get_db
 from core.utils import validate_sku_format
 from models.spare_part import SparePart
-from schemas.spare_part_schemas import SparePartCreate, SparePartResponse, SparePartUpdate
+from schemas.spare_part_schemas import (
+    SparePartCreate,
+    SparePartResponse,
+    SparePartUpdate,
+)
 
 router = APIRouter(prefix="/items", tags=["Items"])
 
@@ -37,7 +41,7 @@ def create_spare_part(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=error_message,
         )
-    
+
     # Check if SKU already exists
     existing = db.execute(
         select(SparePart).where(SparePart.sku == spare_part_data.sku)

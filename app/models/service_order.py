@@ -23,7 +23,6 @@ class ServiceOrder(Auditor):
 
     IDEMPOTENCY_WINDOW_SECONDS = 100
 
-
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     request_id: Mapped[int] = mapped_column(
         nullable=False,

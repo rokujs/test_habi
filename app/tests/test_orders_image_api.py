@@ -1,6 +1,7 @@
 """
 Tests for service order images API endpoints.
 """
+
 import pytest
 from io import BytesIO
 from unittest.mock import Mock, patch, MagicMock
@@ -32,14 +33,14 @@ def sample_order(db_session):
     )
     db_session.add(order)
     db_session.commit()
-    
+
     return order
 
 
 @pytest.fixture
 def mock_s3_upload():
     """Mock S3 service upload to avoid actual S3 calls."""
-    with patch('routers.orders_image_api_views.s3_service.upload_image') as mock:
+    with patch("routers.orders_image_api_views.s3_service.upload_image") as mock:
         mock.return_value = "https://s3.amazonaws.com/bucket/orders/1/image.jpg"
         yield mock
 
@@ -47,13 +48,13 @@ def mock_s3_upload():
 class TestUploadOrderImage:
     """Tests for POST /orders/{order_id}/image/"""
 
-    def test_upload_image_success_jpeg(self, client, db_session, sample_order, mock_s3_upload):
+    def test_upload_image_success_jpeg(
+        self, client, db_session, sample_order, mock_s3_upload
+    ):
         """Test successful image upload with JPEG format."""
         # Create a fake image file
         file_content = b"fake image content"
-        files = {
-            "file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")
-        }
+        files = {"file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")}
 
         response = client.post(f"/orders/{sample_order.id}/image/", files=files)
 
@@ -66,19 +67,23 @@ class TestUploadOrderImage:
         assert "date_created" in data
 
         # Verify it was saved in database
-        db_image = db_session.query(ServiceOrderImage).filter_by(order_id=sample_order.id).first()
+        db_image = (
+            db_session.query(ServiceOrderImage)
+            .filter_by(order_id=sample_order.id)
+            .first()
+        )
         assert db_image is not None
         assert db_image.file_name == "test_image.jpg"
 
         # Verify S3 upload was called
         mock_s3_upload.assert_called_once()
 
-    def test_upload_image_success_png(self, client, db_session, sample_order, mock_s3_upload):
+    def test_upload_image_success_png(
+        self, client, db_session, sample_order, mock_s3_upload
+    ):
         """Test successful image upload with PNG format."""
         file_content = b"fake png content"
-        files = {
-            "file": ("test_image.png", BytesIO(file_content), "image/png")
-        }
+        files = {"file": ("test_image.png", BytesIO(file_content), "image/png")}
 
         response = client.post(f"/orders/{sample_order.id}/image/", files=files)
 
@@ -86,12 +91,12 @@ class TestUploadOrderImage:
         data = response.json()
         assert data["file_name"] == "test_image.png"
 
-    def test_upload_image_success_webp(self, client, db_session, sample_order, mock_s3_upload):
+    def test_upload_image_success_webp(
+        self, client, db_session, sample_order, mock_s3_upload
+    ):
         """Test successful image upload with WebP format."""
         file_content = b"fake webp content"
-        files = {
-            "file": ("test_image.webp", BytesIO(file_content), "image/webp")
-        }
+        files = {"file": ("test_image.webp", BytesIO(file_content), "image/webp")}
 
         response = client.post(f"/orders/{sample_order.id}/image/", files=files)
 
@@ -102,9 +107,7 @@ class TestUploadOrderImage:
     def test_upload_image_order_not_found(self, client, mock_s3_upload):
         """Test uploading image to non-existent order fails."""
         file_content = b"fake image content"
-        files = {
-            "file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")
-        }
+        files = {"file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")}
 
         response = client.post("/orders/99999/image/", files=files)
 
@@ -118,9 +121,7 @@ class TestUploadOrderImage:
     def test_upload_image_invalid_file_type(self, client, sample_order, mock_s3_upload):
         """Test uploading non-image file type fails."""
         file_content = b"fake pdf content"
-        files = {
-            "file": ("document.pdf", BytesIO(file_content), "application/pdf")
-        }
+        files = {"file": ("document.pdf", BytesIO(file_content), "application/pdf")}
 
         response = client.post(f"/orders/{sample_order.id}/image/", files=files)
 
@@ -130,12 +131,12 @@ class TestUploadOrderImage:
         # Verify S3 upload was not called
         mock_s3_upload.assert_not_called()
 
-    def test_upload_image_invalid_file_type_text(self, client, sample_order, mock_s3_upload):
+    def test_upload_image_invalid_file_type_text(
+        self, client, sample_order, mock_s3_upload
+    ):
         """Test uploading text file fails."""
         file_content = b"just some text"
-        files = {
-            "file": ("file.txt", BytesIO(file_content), "text/plain")
-        }
+        files = {"file": ("file.txt", BytesIO(file_content), "text/plain")}
 
         response = client.post(f"/orders/{sample_order.id}/image/", files=files)
 
@@ -144,37 +145,39 @@ class TestUploadOrderImage:
 
     def test_upload_image_s3_upload_error(self, client, sample_order):
         """Test handling S3 upload failure."""
-        with patch('routers.orders_image_api_views.s3_service.upload_image') as mock_upload:
+        with patch(
+            "routers.orders_image_api_views.s3_service.upload_image"
+        ) as mock_upload:
             mock_upload.side_effect = S3UploadError("S3 connection failed")
 
             file_content = b"fake image content"
-            files = {
-                "file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")
-            }
+            files = {"file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")}
 
             response = client.post(f"/orders/{sample_order.id}/image/", files=files)
 
             assert response.status_code == status.HTTP_502_BAD_GATEWAY
             assert "Failed to upload image" in response.json()["detail"]
 
-    def test_upload_multiple_images_to_same_order(self, client, db_session, sample_order, mock_s3_upload):
+    def test_upload_multiple_images_to_same_order(
+        self, client, db_session, sample_order, mock_s3_upload
+    ):
         """Test uploading multiple images to the same order."""
         # Upload first image
-        files1 = {
-            "file": ("image1.jpg", BytesIO(b"content1"), "image/jpeg")
-        }
+        files1 = {"file": ("image1.jpg", BytesIO(b"content1"), "image/jpeg")}
         response1 = client.post(f"/orders/{sample_order.id}/image/", files=files1)
         assert response1.status_code == status.HTTP_201_CREATED
 
         # Upload second image
-        files2 = {
-            "file": ("image2.jpg", BytesIO(b"content2"), "image/jpeg")
-        }
+        files2 = {"file": ("image2.jpg", BytesIO(b"content2"), "image/jpeg")}
         response2 = client.post(f"/orders/{sample_order.id}/image/", files=files2)
         assert response2.status_code == status.HTTP_201_CREATED
 
         # Verify both images were saved
-        db_images = db_session.query(ServiceOrderImage).filter_by(order_id=sample_order.id).all()
+        db_images = (
+            db_session.query(ServiceOrderImage)
+            .filter_by(order_id=sample_order.id)
+            .all()
+        )
         assert len(db_images) == 2
 
     def test_upload_image_no_file_provided(self, client, sample_order):
@@ -183,12 +186,12 @@ class TestUploadOrderImage:
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
-    def test_upload_image_filename_without_extension(self, client, sample_order, mock_s3_upload):
+    def test_upload_image_filename_without_extension(
+        self, client, sample_order, mock_s3_upload
+    ):
         """Test uploading image with filename without extension."""
         file_content = b"fake image content"
-        files = {
-            "file": ("noextension", BytesIO(file_content), "image/jpeg")
-        }
+        files = {"file": ("noextension", BytesIO(file_content), "image/jpeg")}
 
         response = client.post(f"/orders/{sample_order.id}/image/", files=files)
 
@@ -196,19 +199,19 @@ class TestUploadOrderImage:
         data = response.json()
         assert data["file_name"] == "noextension"
 
-    def test_upload_image_generates_unique_filename(self, client, sample_order, mock_s3_upload):
+    def test_upload_image_generates_unique_filename(
+        self, client, sample_order, mock_s3_upload
+    ):
         """Test that uploaded images get unique filenames in S3."""
-        files = {
-            "file": ("test.jpg", BytesIO(b"content"), "image/jpeg")
-        }
+        files = {"file": ("test.jpg", BytesIO(b"content"), "image/jpeg")}
 
         response = client.post(f"/orders/{sample_order.id}/image/", files=files)
 
         assert response.status_code == status.HTTP_201_CREATED
-        
+
         # Check that S3 upload was called with a unique filename containing UUID
         call_args = mock_s3_upload.call_args
-        s3_filename = call_args.kwargs['file_name']
+        s3_filename = call_args.kwargs["file_name"]
         assert f"orders/{sample_order.id}/" in s3_filename
         assert ".jpg" in s3_filename
 
@@ -271,7 +274,9 @@ class TestListOrderImages:
         assert "not found" in response.json()["detail"]
         assert "99999" in response.json()["detail"]
 
-    def test_list_images_only_shows_order_images(self, client, db_session, sample_order):
+    def test_list_images_only_shows_order_images(
+        self, client, db_session, sample_order
+    ):
         """Test that listing only shows images for the specific order."""
         # Create another order
         order2 = ServiceOrder(

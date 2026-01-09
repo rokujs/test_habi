@@ -1,12 +1,12 @@
 """
 Tests for service orders API endpoints.
 """
+
 import pytest
 from decimal import Decimal
-from datetime import datetime, timedelta, timezone
 from fastapi import status
 
-from models.service_order import ServiceOrder, ServiceOrderStatus
+from models.service_order import ServiceOrderStatus
 from models.spare_part import SparePart
 from models.category import Category
 
@@ -104,7 +104,7 @@ class TestCreateServiceOrder:
         response1 = client.post("/orders/", json=order_data)
         assert response1.status_code == status.HTTP_201_CREATED
         order_id_1 = response1.json()["id"]
-        
+
         # Check stock after first order
         db_session.refresh(spare_part)
         assert spare_part.stock == 90
@@ -116,7 +116,7 @@ class TestCreateServiceOrder:
 
         # Should return the same order
         assert order_id_1 == order_id_2
-        
+
         # Stock should not be reduced again
         db_session.refresh(spare_part)
         assert spare_part.stock == 90  # Still 90, not 80
@@ -136,7 +136,9 @@ class TestCreateServiceOrder:
         assert "not found" in response.json()["detail"]
         assert "99999" in response.json()["detail"]
 
-    def test_create_service_order_multiple_missing_spare_parts(self, client, db_session):
+    def test_create_service_order_multiple_missing_spare_parts(
+        self, client, db_session
+    ):
         """Test creating an order with multiple non-existent spare parts."""
         spare_part = SparePart(
             name="Tornillo",
@@ -211,7 +213,7 @@ class TestCreateServiceOrder:
         response = client.post("/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        
+
         # Stock should be zero now
         db_session.refresh(spare_part)
         assert spare_part.stock == 0
@@ -396,7 +398,9 @@ class TestCreateServiceOrder:
         data = response.json()
         assert Decimal(data["total"]) == Decimal("500.00")  # 5000 * 0.10
 
-    def test_create_service_order_duplicate_spare_part_in_items(self, client, db_session):
+    def test_create_service_order_duplicate_spare_part_in_items(
+        self, client, db_session
+    ):
         """Test creating an order with duplicate spare part entries."""
         spare_part = SparePart(
             name="Tornillo",

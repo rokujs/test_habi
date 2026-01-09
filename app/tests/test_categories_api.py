@@ -1,6 +1,7 @@
 """
 Tests for categories API endpoints.
 """
+
 import pytest
 from fastapi import status
 
@@ -54,8 +55,7 @@ class TestCreateCategory:
         """Test creating a category with duplicate name fails."""
         # Create first category
         category = Category(
-            name="Herramientas",
-            description="Herramientas de uso general"
+            name="Herramientas", description="Herramientas de uso general"
         )
         db_session.add(category)
         db_session.commit()
@@ -165,7 +165,7 @@ class TestCreateCategory:
             "description": "Mayúscula inicial",
         }
         response_2 = client.post("/categories/", json=category_data_2)
-        
+
         # Depending on your business logic, this might succeed or fail
         # Current implementation checks exact name match, so different case should succeed
         assert response_2.status_code == status.HTTP_201_CREATED
