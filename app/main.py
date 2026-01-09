@@ -23,10 +23,10 @@ app = FastAPI(
 )
 
 # Register routers
-app.include_router(categories_router)
-app.include_router(spare_parts_router)
-app.include_router(orders_router)
-app.include_router(orders_image_router)
+app.include_router(categories_router, prefix="/api/v1")
+app.include_router(spare_parts_router, prefix="/api/v1")
+app.include_router(orders_router, prefix="/api/v1")
+app.include_router(orders_image_router, prefix="/api/v1")
 
 
 @app.get("/", tags=["Health"])
