@@ -22,7 +22,7 @@ class TestCreateSparePart:
             "stock": 100,
         }
 
-        response = client.post("/items/", json=spare_part_data)
+        response = client.post("/api/v1/items/", json=spare_part_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -56,7 +56,7 @@ class TestCreateSparePart:
             "category_id": category.id,
         }
 
-        response = client.post("/items/", json=spare_part_data)
+        response = client.post("/api/v1/items/", json=spare_part_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -81,7 +81,7 @@ class TestCreateSparePart:
             "stock": 30,
         }
 
-        response = client.post("/items/", json=spare_part_data)
+        response = client.post("/api/v1/items/", json=spare_part_data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "already exists" in response.json()["detail"]
@@ -95,7 +95,7 @@ class TestCreateSparePart:
             "stock": 10,
         }
 
-        response = client.post("/items/", json=spare_part_data)
+        response = client.post("/api/v1/items/", json=spare_part_data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Invalid SKU format" in response.json()["detail"]
@@ -109,7 +109,7 @@ class TestCreateSparePart:
             "stock": 10,
         }
 
-        response = client.post("/items/", json=spare_part_data)
+        response = client.post("/api/v1/items/", json=spare_part_data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "non-empty" in response.json()["detail"]
@@ -123,7 +123,7 @@ class TestCreateSparePart:
             "stock": 10,
         }
 
-        response = client.post("/items/", json=spare_part_data)
+        response = client.post("/api/v1/items/", json=spare_part_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -136,7 +136,7 @@ class TestCreateSparePart:
             "stock": -5,
         }
 
-        response = client.post("/items/", json=spare_part_data)
+        response = client.post("/api/v1/items/", json=spare_part_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -147,7 +147,7 @@ class TestCreateSparePart:
             # Missing sku and price
         }
 
-        response = client.post("/items/", json=spare_part_data)
+        response = client.post("/api/v1/items/", json=spare_part_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -168,7 +168,7 @@ class TestUpdateSparePart:
 
         update_data = {"price": 1.50}
 
-        response = client.patch("/items/D-STL-M10-50", json=update_data)
+        response = client.patch("/api/v1/items/D-STL-M10-50", json=update_data)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -192,7 +192,7 @@ class TestUpdateSparePart:
 
         update_data = {"stock": 150}
 
-        response = client.patch("/items/E-STL-M8-20", json=update_data)
+        response = client.patch("/api/v1/items/E-STL-M8-20", json=update_data)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -212,7 +212,7 @@ class TestUpdateSparePart:
 
         update_data = {"price": 0.30, "stock": 250}
 
-        response = client.patch("/items/F-STL-M6-10", json=update_data)
+        response = client.patch("/api/v1/items/F-STL-M6-10", json=update_data)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -223,7 +223,7 @@ class TestUpdateSparePart:
         """Test updating a non-existent spare part."""
         update_data = {"price": 1.00}
 
-        response = client.patch("/items/NONEXISTENT-SKU", json=update_data)
+        response = client.patch("/api/v1/items/NONEXISTENT-SKU", json=update_data)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"]
@@ -241,7 +241,7 @@ class TestUpdateSparePart:
 
         update_data = {}
 
-        response = client.patch("/items/G-STL-M10-50", json=update_data)
+        response = client.patch("/api/v1/items/G-STL-M10-50", json=update_data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "No fields to update" in response.json()["detail"]
@@ -259,7 +259,7 @@ class TestUpdateSparePart:
 
         update_data = {"price": -1.00}
 
-        response = client.patch("/items/H-STL-M10-50", json=update_data)
+        response = client.patch("/api/v1/items/H-STL-M10-50", json=update_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -276,7 +276,7 @@ class TestUpdateSparePart:
 
         update_data = {"stock": -10}
 
-        response = client.patch("/items/I-STL-M10-50", json=update_data)
+        response = client.patch("/api/v1/items/I-STL-M10-50", json=update_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -286,7 +286,7 @@ class TestListSpareParts:
 
     def test_list_spare_parts_empty(self, client):
         """Test listing spare parts when database is empty."""
-        response = client.get("/items/")
+        response = client.get("/api/v1/items/")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == []
@@ -316,7 +316,7 @@ class TestListSpareParts:
         db_session.add_all(spare_parts)
         db_session.commit()
 
-        response = client.get("/items/")
+        response = client.get("/api/v1/items/")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -341,7 +341,7 @@ class TestListSpareParts:
         db_session.add(spare_part)
         db_session.commit()
 
-        response = client.get("/items/")
+        response = client.get("/api/v1/items/")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -362,7 +362,7 @@ class TestListSpareParts:
         db_session.add_all(spare_parts)
         db_session.commit()
 
-        response = client.get("/items/?skip=2")
+        response = client.get("/api/v1/items/?skip=2")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -383,7 +383,7 @@ class TestListSpareParts:
         db_session.add_all(spare_parts)
         db_session.commit()
 
-        response = client.get("/items/?limit=5")
+        response = client.get("/api/v1/items/?limit=5")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -403,7 +403,7 @@ class TestListSpareParts:
         db_session.add_all(spare_parts)
         db_session.commit()
 
-        response = client.get("/items/?skip=3&limit=4")
+        response = client.get("/api/v1/items/?skip=3&limit=4")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -435,7 +435,7 @@ class TestListSpareParts:
         db_session.add_all(spare_parts)
         db_session.commit()
 
-        response = client.get("/items/")
+        response = client.get("/api/v1/items/")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()

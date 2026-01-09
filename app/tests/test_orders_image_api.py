@@ -56,7 +56,7 @@ class TestUploadOrderImage:
         file_content = b"fake image content"
         files = {"file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")}
 
-        response = client.post(f"/orders/{sample_order.id}/image/", files=files)
+        response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -85,7 +85,7 @@ class TestUploadOrderImage:
         file_content = b"fake png content"
         files = {"file": ("test_image.png", BytesIO(file_content), "image/png")}
 
-        response = client.post(f"/orders/{sample_order.id}/image/", files=files)
+        response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -98,7 +98,7 @@ class TestUploadOrderImage:
         file_content = b"fake webp content"
         files = {"file": ("test_image.webp", BytesIO(file_content), "image/webp")}
 
-        response = client.post(f"/orders/{sample_order.id}/image/", files=files)
+        response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -109,7 +109,7 @@ class TestUploadOrderImage:
         file_content = b"fake image content"
         files = {"file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")}
 
-        response = client.post("/orders/99999/image/", files=files)
+        response = client.post("/api/v1/orders/99999/image/", files=files)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"]
@@ -123,7 +123,7 @@ class TestUploadOrderImage:
         file_content = b"fake pdf content"
         files = {"file": ("document.pdf", BytesIO(file_content), "application/pdf")}
 
-        response = client.post(f"/orders/{sample_order.id}/image/", files=files)
+        response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Invalid file type" in response.json()["detail"]
@@ -138,7 +138,7 @@ class TestUploadOrderImage:
         file_content = b"just some text"
         files = {"file": ("file.txt", BytesIO(file_content), "text/plain")}
 
-        response = client.post(f"/orders/{sample_order.id}/image/", files=files)
+        response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Invalid file type" in response.json()["detail"]
@@ -153,7 +153,7 @@ class TestUploadOrderImage:
             file_content = b"fake image content"
             files = {"file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")}
 
-            response = client.post(f"/orders/{sample_order.id}/image/", files=files)
+            response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
 
             assert response.status_code == status.HTTP_502_BAD_GATEWAY
             assert "Failed to upload image" in response.json()["detail"]
@@ -164,12 +164,12 @@ class TestUploadOrderImage:
         """Test uploading multiple images to the same order."""
         # Upload first image
         files1 = {"file": ("image1.jpg", BytesIO(b"content1"), "image/jpeg")}
-        response1 = client.post(f"/orders/{sample_order.id}/image/", files=files1)
+        response1 = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files1)
         assert response1.status_code == status.HTTP_201_CREATED
 
         # Upload second image
         files2 = {"file": ("image2.jpg", BytesIO(b"content2"), "image/jpeg")}
-        response2 = client.post(f"/orders/{sample_order.id}/image/", files=files2)
+        response2 = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files2)
         assert response2.status_code == status.HTTP_201_CREATED
 
         # Verify both images were saved
@@ -182,7 +182,7 @@ class TestUploadOrderImage:
 
     def test_upload_image_no_file_provided(self, client, sample_order):
         """Test uploading without providing a file fails."""
-        response = client.post(f"/orders/{sample_order.id}/image/")
+        response = client.post(f"/api/v1/orders/{sample_order.id}/image/")
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -193,7 +193,7 @@ class TestUploadOrderImage:
         file_content = b"fake image content"
         files = {"file": ("noextension", BytesIO(file_content), "image/jpeg")}
 
-        response = client.post(f"/orders/{sample_order.id}/image/", files=files)
+        response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -205,7 +205,7 @@ class TestUploadOrderImage:
         """Test that uploaded images get unique filenames in S3."""
         files = {"file": ("test.jpg", BytesIO(b"content"), "image/jpeg")}
 
-        response = client.post(f"/orders/{sample_order.id}/image/", files=files)
+        response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -221,7 +221,7 @@ class TestListOrderImages:
 
     def test_list_images_empty(self, client, sample_order):
         """Test listing images when order has no images."""
-        response = client.get(f"/orders/{sample_order.id}/images/")
+        response = client.get(f"/api/v1/orders/{sample_order.id}/images/")
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == []
@@ -236,7 +236,7 @@ class TestListOrderImages:
         db_session.add(image)
         db_session.commit()
 
-        response = client.get(f"/orders/{sample_order.id}/images/")
+        response = client.get(f"/api/v1/orders/{sample_order.id}/images/")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -258,7 +258,7 @@ class TestListOrderImages:
         db_session.add_all(images)
         db_session.commit()
 
-        response = client.get(f"/orders/{sample_order.id}/images/")
+        response = client.get(f"/api/v1/orders/{sample_order.id}/images/")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -268,7 +268,7 @@ class TestListOrderImages:
 
     def test_list_images_order_not_found(self, client):
         """Test listing images for non-existent order fails."""
-        response = client.get("/orders/99999/images/")
+        response = client.get("/api/v1/orders/99999/images/")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"]
@@ -302,7 +302,7 @@ class TestListOrderImages:
         db_session.commit()
 
         # List images for first order
-        response = client.get(f"/orders/{sample_order.id}/images/")
+        response = client.get(f"/api/v1/orders/{sample_order.id}/images/")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -320,7 +320,7 @@ class TestListOrderImages:
         db_session.add(image)
         db_session.commit()
 
-        response = client.get(f"/orders/{sample_order.id}/images/")
+        response = client.get(f"/api/v1/orders/{sample_order.id}/images/")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()

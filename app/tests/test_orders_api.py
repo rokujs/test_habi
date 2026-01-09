@@ -40,7 +40,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -75,7 +75,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -101,7 +101,7 @@ class TestCreateServiceOrder:
         }
 
         # First request
-        response1 = client.post("/orders/", json=order_data)
+        response1 = client.post("/api/v1/orders/", json=order_data)
         assert response1.status_code == status.HTTP_201_CREATED
         order_id_1 = response1.json()["id"]
 
@@ -110,7 +110,7 @@ class TestCreateServiceOrder:
         assert spare_part.stock == 90
 
         # Second request with same request_id (within idempotency window)
-        response2 = client.post("/orders/", json=order_data)
+        response2 = client.post("/api/v1/orders/", json=order_data)
         assert response2.status_code == status.HTTP_201_CREATED
         order_id_2 = response2.json()["id"]
 
@@ -130,7 +130,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"]
@@ -158,7 +158,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found" in response.json()["detail"]
@@ -181,7 +181,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Insufficient stock" in response.json()["detail"]
@@ -210,7 +210,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -243,7 +243,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Insufficient stock" in response.json()["detail"]
@@ -261,7 +261,7 @@ class TestCreateServiceOrder:
             "items": [],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -271,7 +271,7 @@ class TestCreateServiceOrder:
             "request_id": 88888,
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -284,7 +284,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -297,7 +297,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -319,7 +319,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -341,7 +341,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -368,7 +368,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -392,7 +392,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -419,7 +419,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         # Current implementation allows duplicates, creates separate line items
         assert response.status_code == status.HTTP_201_CREATED
@@ -449,7 +449,7 @@ class TestCreateServiceOrder:
             ],
         }
 
-        response = client.post("/orders/", json=order_data)
+        response = client.post("/api/v1/orders/", json=order_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()

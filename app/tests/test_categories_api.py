@@ -18,7 +18,7 @@ class TestCreateCategory:
             "description": "Componentes electrónicos y accesorios",
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -39,7 +39,7 @@ class TestCreateCategory:
             "name": "Tornillería",
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -66,7 +66,7 @@ class TestCreateCategory:
             "description": "Otra descripción",
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "already exists" in response.json()["detail"]
@@ -78,7 +78,7 @@ class TestCreateCategory:
             "description": "Descripción sin nombre",
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -89,7 +89,7 @@ class TestCreateCategory:
             "description": "Descripción",
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -100,7 +100,7 @@ class TestCreateCategory:
             "description": None,
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -115,7 +115,7 @@ class TestCreateCategory:
         ]
 
         for category_data in categories_data:
-            response = client.post("/categories/", json=category_data)
+            response = client.post("/api/v1/categories/", json=category_data)
             assert response.status_code == status.HTTP_201_CREATED
 
         # Verify all were created
@@ -129,7 +129,7 @@ class TestCreateCategory:
             "description": "A" * 255,  # Max length from model is 255
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -142,7 +142,7 @@ class TestCreateCategory:
             "description": "Descripción con símbolos: @#$%",
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
@@ -156,7 +156,7 @@ class TestCreateCategory:
             "name": "electrónica",
             "description": "Minúsculas",
         }
-        response_1 = client.post("/categories/", json=category_data_1)
+        response_1 = client.post("/api/v1/categories/", json=category_data_1)
         assert response_1.status_code == status.HTTP_201_CREATED
 
         # Try to create with different case
@@ -164,7 +164,7 @@ class TestCreateCategory:
             "name": "Electrónica",
             "description": "Mayúscula inicial",
         }
-        response_2 = client.post("/categories/", json=category_data_2)
+        response_2 = client.post("/api/v1/categories/", json=category_data_2)
 
         # Depending on your business logic, this might succeed or fail
         # Current implementation checks exact name match, so different case should succeed
@@ -177,7 +177,7 @@ class TestCreateCategory:
             "description": "Con espacios",
         }
 
-        response = client.post("/categories/", json=category_data)
+        response = client.post("/api/v1/categories/", json=category_data)
 
         # Current implementation doesn't trim whitespace
         # You might want to add .strip() in the business logic
