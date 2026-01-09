@@ -153,7 +153,9 @@ class TestUploadOrderImage:
             file_content = b"fake image content"
             files = {"file": ("test_image.jpg", BytesIO(file_content), "image/jpeg")}
 
-            response = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files)
+            response = client.post(
+                f"/api/v1/orders/{sample_order.id}/image/", files=files
+            )
 
             assert response.status_code == status.HTTP_502_BAD_GATEWAY
             assert "Failed to upload image" in response.json()["detail"]
@@ -164,12 +166,16 @@ class TestUploadOrderImage:
         """Test uploading multiple images to the same order."""
         # Upload first image
         files1 = {"file": ("image1.jpg", BytesIO(b"content1"), "image/jpeg")}
-        response1 = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files1)
+        response1 = client.post(
+            f"/api/v1/orders/{sample_order.id}/image/", files=files1
+        )
         assert response1.status_code == status.HTTP_201_CREATED
 
         # Upload second image
         files2 = {"file": ("image2.jpg", BytesIO(b"content2"), "image/jpeg")}
-        response2 = client.post(f"/api/v1/orders/{sample_order.id}/image/", files=files2)
+        response2 = client.post(
+            f"/api/v1/orders/{sample_order.id}/image/", files=files2
+        )
         assert response2.status_code == status.HTTP_201_CREATED
 
         # Verify both images were saved
